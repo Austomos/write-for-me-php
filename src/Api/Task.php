@@ -3,17 +3,16 @@
 namespace Austomos\WriteForMePhp\Api;
 
 use Austomos\WriteForMePhp\Api\Task\DetailedTaskSolutions;
+use Austomos\WriteForMePhp\Interfaces\Api\Task\DetailedTaskSolutionsInterface;
 use Austomos\WriteForMePhp\Interfaces\Api\TaskInterface;
 
 class Task implements TaskInterface
 {
 
-    /**
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     * @throws \Austomos\WriteForMePhp\Exceptions\WriteForMeException
-     */
-    public function detailedTaskSolutions(): DetailedTaskSolutions
+
+    public function detailedTaskSolutions(): DetailedTaskSolutionsInterface
     {
         return new DetailedTaskSolutions();
     }
+
 }
