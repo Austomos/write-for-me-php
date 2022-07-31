@@ -13,6 +13,7 @@ use Psr\Http\Message\UriInterface;
 abstract class Client extends GuzzleClient implements ClientInterface
 {
     abstract protected function getOptions(): array;
+    abstract protected function isValidOptions(): bool;
     abstract protected function getMethod(): string;
     abstract protected function getUri(): string|UriInterface;
 
@@ -31,6 +32,9 @@ abstract class Client extends GuzzleClient implements ClientInterface
      */
     public function requestResponse(): ResponseInterface
     {
+        if (!$this->isValidOptions()) {
+            throw new WriteForMeException('Invalid arguments provided', 400);
+        }
         try {
             return new Response($this->request($this->getMethod(), $this->getUri(), $this->getOptions()));
         } catch (GuzzleException $e) {
