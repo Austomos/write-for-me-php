@@ -1,0 +1,30 @@
+<!--<?xml version="1.0"?>-->
+<ruleset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         name="PHP_CodeSniffer"
+         xsi:noNamespaceSchemaLocation="./vendor/squizlabs/php_codesniffer/phpcs.xsd"
+>
+    <description>PHP CS rules</description>
+    <arg name="colors"/>
+    <arg phpcs-only="true" value="sp"/>
+    <arg phpcbf-only="true" value="p"/>
+
+    <!-- Inclure PSR-1 -->
+    <rule ref="PSR1">
+        <type>error</type>
+    </rule>
+
+    <!-- Inclure PSR-12 -->
+    <rule ref="PSR12">
+        <type>error</type>
+    </rule>
+
+    <!-- Limit line length -->
+    <rule ref="Generic.Files.LineLength">
+        <properties>
+            <property name="lineLimit" value="125"/>
+            <property phpcs-only="true" name="absoluteLineLimit" value="135"/>
+            <property phpcbf-only="true" name="absoluteLineLimit" value="140"/>
+        </properties>
+    </rule>
+
+</ruleset>
