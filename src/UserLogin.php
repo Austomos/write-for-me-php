@@ -15,28 +15,13 @@ class UserLogin implements UserLoginInterface
     private array $login;
 
     /**
-     * @param string $username
-     * @param string $password
-     *
-     * @throws InvalidArgumentException
-     * @throws \Austomos\WriteForMePhp\Exceptions\WriteForMeException
-     */
-    public function __construct(string $username, string $password)
-    {
-        if (empty($username) || empty($password)) {
-            throw new InvalidArgumentException('Username and password are required');
-        }
-        $client = new Client([
-            'base_uri' => WriteForMe::BASE_URI,
-        ]);
-        $this->login($client, $username, $password);
-    }
-
-    /**
      * @throws \Austomos\WriteForMePhp\Exceptions\WriteForMeException
      */
     public function login(Client $client, string $username, string $password): void
     {
+        if (empty($username) || empty($password)) {
+            throw new InvalidArgumentException('Username and password are required');
+        }
         try {
             $response = $client->post('/login', [
                 'json' => [

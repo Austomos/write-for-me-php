@@ -18,7 +18,11 @@ class WriteForMe implements WriteForMeInterface
      */
     public static function create(string $username, string $password): WriteForMeInterface
     {
-        self::$login = new UserLogin($username, $password);
+        self::$login = new UserLogin();
+        $client = new Client([
+            'base_uri' => self::BASE_URI,
+        ]);
+        self::$login->login($client, $username, $password);
         return new static();
     }
 
