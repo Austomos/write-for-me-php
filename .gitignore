@@ -3,3 +3,7 @@
 
 # Dependencies
 /vendor/
+
+# Test
+.phpunit.result.cache
+coverage-html
