@@ -13,5 +13,4 @@ interface UserLoginInterface
     public function getUserId(): string;
     public function isConnected(): bool;
     public function getLogin(): array;
-
 }

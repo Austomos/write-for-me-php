@@ -8,11 +8,8 @@ use Austomos\WriteForMePhp\Interfaces\Api\TaskInterface;
 
 class Task implements TaskInterface
 {
-
-
     public function detailedTaskSolutions(): DetailedTaskSolutionsInterface
     {
         return new DetailedTaskSolutions();
     }
-
 }

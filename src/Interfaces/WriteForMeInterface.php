@@ -10,5 +10,4 @@ interface WriteForMeInterface
     public static function create(string $username, string $password): WriteForMeInterface;
 
     public function task(): TaskInterface;
-
 }

@@ -79,5 +79,4 @@ class UserLogin implements UserLoginInterface
     {
         return $this->login;
     }
-
 }

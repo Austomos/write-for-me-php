@@ -81,5 +81,4 @@ class DetailedTaskSolutions extends Client implements DetailedTaskSolutionsInter
     {
         return !empty($this->task);
     }
-
 }
