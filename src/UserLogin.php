@@ -7,6 +7,7 @@ use Austomos\WriteForMePhp\Interfaces\UserLoginInterface;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use InvalidArgumentException;
+use JsonException;
 use Psr\Http\Message\ResponseInterface;
 
 class UserLogin implements UserLoginInterface
@@ -59,9 +60,9 @@ class UserLogin implements UserLoginInterface
                 $response->getBody()->getContents(),
                 true,
                 512,
-                JSON_THROW_ON_ERROR|JSON_OBJECT_AS_ARRAY
+                JSON_THROW_ON_ERROR | JSON_OBJECT_AS_ARRAY
             );
-        } catch (\JsonException $e) {
+        } catch (JsonException $e) {
             throw new WriteForMeException($e->getMessage(), $e->getCode(), $e);
         }
         if ($this->login['success'] !== true) {
@@ -93,4 +94,5 @@ class UserLogin implements UserLoginInterface
     {
         return $this->login;
     }
+
 }
