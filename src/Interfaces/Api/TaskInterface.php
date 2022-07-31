@@ -2,9 +2,9 @@
 
 namespace Austomos\WriteForMePhp\Interfaces\Api;
 
-use Austomos\WriteForMePhp\Api\Task\DetailedTaskSolutions;
+use Austomos\WriteForMePhp\Interfaces\Api\Task\DetailedTaskSolutionsInterface;
 
 interface TaskInterface
 {
-    public function detailedTaskSolutions(): DetailedTaskSolutions;
+    public function detailedTaskSolutions(): DetailedTaskSolutionsInterface;
 }
