@@ -17,14 +17,21 @@ abstract class Client extends GuzzleClient implements ClientInterface
     abstract protected function getMethod(): string;
     abstract protected function getUri(): string|UriInterface;
 
+    /**
+     * @throws \Austomos\WriteForMePhp\Exceptions\WriteForMeException
+     */
     public function __construct()
     {
-        parent::__construct([
-            'base_uri' => WriteForMe::BASE_URI,
-            'headers' => [
-                'Authorization' => 'Bearer ' . WriteForMe::login()->getToken(),
-            ]
-        ]);
+        try {
+            parent::__construct([
+                'base_uri' => WriteForMe::BASE_URI,
+                'headers' => [
+                    'Authorization' => 'Bearer ' . WriteForMe::login()->getToken(),
+                ]
+            ]);
+        } catch (\RuntimeException $e) {
+            throw new WriteForMeException('You must login first', 400, $e);
+        }
     }
 
     /**

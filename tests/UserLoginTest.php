@@ -5,8 +5,10 @@ namespace Austomos\WriteForMePhp\Tests;
 use Austomos\WriteForMePhp\Exceptions\WriteForMeException;
 use Austomos\WriteForMePhp\UserLogin;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
 use InvalidArgumentException;
 use Mockery;
@@ -40,6 +42,30 @@ class UserLoginTest extends TestCase
         $userLogin = new UserLogin();
         $stub = Mockery::mock(Client::class);
         $userLogin->login($stub, 'mock_user', '');
+    }
+
+    public function testLoginHttpResultException(): void
+    {
+        $mockHandler = new MockHandler([
+            new RequestException(
+                'Unauthorized mock',
+                new Request('GET', '/getSolutions'),
+                new Response(401, reason: 'Unauthorized mock')
+            )
+        ]);
+
+        $mockClient = new Client([
+            'handler' => HandlerStack::create($mockHandler)
+        ]);
+
+        $this->expectException(WriteForMeException::class);
+        $this->expectExceptionMessage('Unauthorized mock');
+        $userLogin = new UserLogin();
+        try {
+            $userLogin->login($mockClient, 'mock_username', 'mock_password');
+        } catch (InvalidArgumentException $e) {
+            $this->fail($e->getMessage());
+        }
     }
 
     public function testLoginSuccessReturnFalseException(): void
