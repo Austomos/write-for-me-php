@@ -20,4 +20,14 @@
             "Austomos\\WriteForMePhp\\Tests\\": "tests/"
         }
     },
+    "scripts": {
+        "check": "./vendor/bin/phpcs src",
+        "fix": "./vendor/bin/phpcbf src",
+
+        "test": "./vendor/bin/phpunit tests",
+        "test:coverage": [
+            "@test --coverage-html=coverage-html",
+            "open coverage-html/index.html"
+        ]
+    }
 }
