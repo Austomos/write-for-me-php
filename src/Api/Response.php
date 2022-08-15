@@ -43,10 +43,10 @@ class Response extends GuzzleResponse implements ResponseInterface
 
     public function getResponseBodyObject(): object
     {
-        return (object) $this->json;
+        return (object) $this->getResponseBody();
     }
     public function getResponseBodyArray(): array
     {
-        return (array) $this->json;
+        return (array) $this->getResponseBody();
     }
 }

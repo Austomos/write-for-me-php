@@ -7,6 +7,7 @@ use Austomos\WriteForMePhp\Interfaces\Api\TaskInterface;
 use Austomos\WriteForMePhp\Interfaces\UserLoginInterface;
 use Austomos\WriteForMePhp\Interfaces\WriteForMeInterface;
 use GuzzleHttp\Client;
+use RuntimeException;
 
 class WriteForMe implements WriteForMeInterface
 {
@@ -33,7 +34,7 @@ class WriteForMe implements WriteForMeInterface
     public static function login(): UserLoginInterface
     {
         if (!isset(self::$login) || !self::$login->isConnected()) {
-            throw new \RuntimeException(
+            throw new RuntimeException(
                 'You must login first, by calling WriteForMe::create() before calling WriteForMe::login()',
                 400
             );

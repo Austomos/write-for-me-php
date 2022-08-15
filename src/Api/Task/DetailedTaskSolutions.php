@@ -52,7 +52,7 @@ class DetailedTaskSolutions extends Client implements DetailedTaskSolutionsInter
         return $this;
     }
 
-    #[ArrayShape(['json' => "array"])] protected function getOptions(): array
+    #[ArrayShape(['json' => "array"])] public function getOptions(): array
     {
         return [
             'json' => [
@@ -67,17 +67,17 @@ class DetailedTaskSolutions extends Client implements DetailedTaskSolutionsInter
         ];
     }
 
-    protected function getMethod(): string
+    public function getMethod(): string
     {
         return 'POST';
     }
 
-    protected function getUri(): string|UriInterface
+    public function getUri(): string|UriInterface
     {
         return 'getSolutions';
     }
 
-    protected function isValidOptions(): bool
+    public function isValidOptions(): bool
     {
         return !empty($this->task);
     }
