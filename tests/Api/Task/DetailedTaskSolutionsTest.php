@@ -61,4 +61,69 @@ class DetailedTaskSolutionsTest extends TestCase
         }
     }
 
+    public function testSetterSuccess(): void
+    {
+        $mockUserLogin = new UserLogin();
+        $reflection = new ReflectionClass(UserLogin::class);
+        $clientProperty = $reflection->getProperty('login');
+        $clientProperty->setValue(
+            $mockUserLogin,
+            ['token' => 'mock_token', 'success' => true]
+        );
+
+        $mockWriteForMe = new WriteForMe();
+        $reflection = new ReflectionClass(WriteForMe::class);
+        $clientProperty = $reflection->getProperty('login');
+        $clientProperty->setValue(
+            $mockWriteForMe,
+            $mockUserLogin
+        );
+
+        $detailedTaskSolutions = new DetailedTaskSolutions();
+        $detailedTaskSolutions->setLimit(10);
+        $detailedTaskSolutions->setQuery('mock_query');
+        $detailedTaskSolutions->setSkip(10);
+        $detailedTaskSolutions->setSortAsc(true);
+        $detailedTaskSolutions->setSortBy('mock_sortBy');
+        $detailedTaskSolutions->setTask('mock_task');
+
+        $options = $detailedTaskSolutions->getOptions();
+        $this->assertIsArray($options);
+        $this->assertArrayHasKey('json', $options);
+
+        $json = $options['json'];
+        $this->assertIsArray($json);
+        $this->assertNotEmpty($json);
+
+        $this->assertArrayHasKey('limit', $json);
+        $this->assertEquals(10, $json['limit']);
+
+        $this->assertArrayHasKey('query', $json);
+        $this->assertEquals('mock_query', $json['query']);
+
+        $this->assertArrayHasKey('skip', $json);
+        $this->assertEquals(10, $json['skip']);
+
+        $this->assertArrayHasKey('sortAsc', $json);
+        $this->assertTrue($json['sortAsc']);
+
+        $this->assertArrayHasKey('sortBy', $json);
+        $this->assertEquals('mock_sortBy', $json['sortBy']);
+
+        $this->assertArrayHasKey('task', $json);
+        $this->assertEquals('mock_task', $json['task']);
+
+        $this->assertArrayHasKey('listType', $json);
+        $this->assertEquals('detailledTaskSolutions', $json['listType']);
+    }
+
+    public function testGetUriSuccess(): void
+    {
+        $this->assertEquals('getSolutions', (new DetailedTaskSolutions())->getUri());
+    }
+
+    public function testGetMethodSuccess(): void
+    {
+        $this->assertEquals('POST', (new DetailedTaskSolutions())->getMethod());
+    }
 }

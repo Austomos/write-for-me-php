@@ -3,11 +3,13 @@
 namespace Austomos\WriteForMePhp\Tests;
 
 use Austomos\WriteForMePhp\Api\Task;
+use Austomos\WriteForMePhp\Exceptions\WriteForMeException;
 use Austomos\WriteForMePhp\UserLogin;
 use Austomos\WriteForMePhp\WriteForMe;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
+use RuntimeException;
 
 class WriteForMeTest extends TestCase
 {
@@ -18,7 +20,8 @@ class WriteForMeTest extends TestCase
     }
     public function testLoginCreateNotCalledRuntimeException(): void
     {
-        $this->expectException(\RuntimeException::class);
+        new WriteForMe();
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage(
             'You must login first, by calling WriteForMe::create() before calling WriteForMe::login()'
         );
@@ -31,7 +34,7 @@ class WriteForMeTest extends TestCase
         $this->assertInstanceOf(Task::class, $wfm->task());
     }
 
-    public function testCreate(): void
+    public function testCreatSuccess(): void
     {
         $wfm = new WriteForMe();
 
@@ -43,6 +46,10 @@ class WriteForMeTest extends TestCase
             $wfm,
             $mockUserLogin
         );
-        $this->assertInstanceOf(WriteForMe::class, $wfm::create('mock_username', 'mock_password'));
+        try {
+            $this->assertInstanceOf(WriteForMe::class, $wfm::create('mock_username', 'mock_password'));
+        } catch (WriteForMeException $e) {
+            $this->fail($e->getMessage());
+        }
     }
 }
