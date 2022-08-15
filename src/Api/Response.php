@@ -10,7 +10,7 @@ use Psr\Http\Message\ResponseInterface as GuzzleResponseInterface;
 
 class Response extends GuzzleResponse implements ResponseInterface
 {
-    private array $json;
+    private array|object $json;
 
     /**
      * @throws \Austomos\WriteForMePhp\Exceptions\WriteForMeException

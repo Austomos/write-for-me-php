@@ -30,7 +30,11 @@ abstract class Client extends GuzzleClient implements ClientInterface
                 ]
             ]);
         } catch (\RuntimeException $e) {
-            throw new WriteForMeException('You must login first', 400, $e);
+            throw new WriteForMeException(
+                'You must login first, by calling WriteForMe::create() before calling WriteForMe::login()',
+                400,
+                $e
+            );
         }
     }
 
@@ -40,7 +44,7 @@ abstract class Client extends GuzzleClient implements ClientInterface
     public function requestResponse(): ResponseInterface
     {
         if (!$this->isValidOptions()) {
-            throw new WriteForMeException('Invalid arguments provided', 400);
+            throw new \InvalidArgumentException('Invalid arguments provided', 400);
         }
         try {
             return new Response($this->request($this->getMethod(), $this->getUri(), $this->getOptions()));

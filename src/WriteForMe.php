@@ -29,7 +29,10 @@ class WriteForMe implements WriteForMeInterface
     public static function login(): UserLoginInterface
     {
         if (!isset(self::$login) || !self::$login instanceof UserLoginInterface) {
-            throw new \RuntimeException('You must call create() before calling login()', 400);
+            throw new \RuntimeException(
+                'You must login first, by calling WriteForMe::create() before calling WriteForMe::login()',
+                400
+            );
         }
         return self::$login;
     }
