@@ -35,8 +35,13 @@ class DetailedTaskSolutionsTest extends TestCase
      */
     public function testDetailedTaskSolutionsInvalidArgumentException(): void
     {
-        $mockUserLogin = Mockery::mock(UserLogin::class)->makePartial();
-        $mockUserLogin->expects('getToken')->andReturn('mock_token');
+        $mockUserLogin = new UserLogin();
+        $reflection = new ReflectionClass(UserLogin::class);
+        $clientProperty = $reflection->getProperty('login');
+        $clientProperty->setValue(
+            $mockUserLogin,
+            ['token' => 'mock_token', 'success' => true]
+        );
 
         $mockWriteForMe = new WriteForMe();
         $reflection = new ReflectionClass(WriteForMe::class);
