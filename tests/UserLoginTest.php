@@ -17,13 +17,24 @@ use PHPUnit\Framework\TestCase;
 class UserLoginTest extends TestCase
 {
 
+    protected function tearDown(): void
+    {
+        Mockery::close();
+        parent::tearDown();
+    }
+
     public function testLoginInvalidArgumentExceptionNoUserNoPassword(): void
     {
+        $userLogin = new UserLogin();
+        $stub = Mockery::mock(Client::class)->makePartial();
+
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Username and password are required');
-        $userLogin = new UserLogin();
-        $stub = Mockery::mock(Client::class);
-        $userLogin->login($stub, '', '');
+        try {
+            $userLogin->login($stub, '', '');
+        } catch (WriteForMeException $e) {
+            $this->fail($e->getMessage());
+        }
     }
 
     public function testLoginInvalidArgumentExceptionNoUser(): void
@@ -32,7 +43,11 @@ class UserLoginTest extends TestCase
         $this->expectExceptionMessage('Username and password are required');
         $userLogin = new UserLogin();
         $stub = Mockery::mock(Client::class);
-        $userLogin->login($stub, '', 'mock_password');
+        try {
+            $userLogin->login($stub, '', 'mock_password');
+        } catch (WriteForMeException $e) {
+            $this->fail($e->getMessage());
+        }
     }
 
     public function testLoginInvalidArgumentExceptionNoPassword(): void
@@ -41,7 +56,11 @@ class UserLoginTest extends TestCase
         $this->expectExceptionMessage('Username and password are required');
         $userLogin = new UserLogin();
         $stub = Mockery::mock(Client::class);
-        $userLogin->login($stub, 'mock_user', '');
+        try {
+            $userLogin->login($stub, 'mock_user', '');
+        } catch (WriteForMeException $e) {
+            $this->fail($e->getMessage());
+        }
     }
 
     public function testLoginHttpResultException(): void
