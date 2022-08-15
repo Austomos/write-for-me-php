@@ -9,6 +9,7 @@ use Austomos\WriteForMePhp\WriteForMe;
 use InvalidArgumentException;
 use Mockery;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
 
 class DetailedTaskSolutionsTest extends TestCase
 {
@@ -37,12 +38,16 @@ class DetailedTaskSolutionsTest extends TestCase
         $mockUserLogin = Mockery::mock(UserLogin::class)->makePartial();
         $mockUserLogin->expects('getToken')->andReturn('mock_token');
 
-        $mockWriteForMe = Mockery::mock('overload:' . WriteForMe::class)->makePartial();
-        $mockWriteForMe->expects('login')->andReturn($mockUserLogin);
-
+        $mockWriteForMe = new WriteForMe();
+        $reflection = new ReflectionClass(WriteForMe::class);
+        $clientProperty = $reflection->getProperty('login');
+        $clientProperty->setValue(
+            $mockWriteForMe,
+            $mockUserLogin
+        );
 
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Invalid task id');
+        $this->expectExceptionMessage('Invalid arguments provided');
         $detailedTaskSolutions = new DetailedTaskSolutions();
         try {
             $detailedTaskSolutions->requestResponse();
