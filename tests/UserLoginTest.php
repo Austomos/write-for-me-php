@@ -11,12 +11,12 @@ use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
 use InvalidArgumentException;
+use JsonException;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 
 class UserLoginTest extends TestCase
 {
-
     protected function tearDown(): void
     {
         Mockery::close();
@@ -103,6 +103,30 @@ class UserLoginTest extends TestCase
 
         $this->expectException(WriteForMeException::class);
         $this->expectExceptionMessage('Login failed: failed');
+        $userLogin = new UserLogin();
+        try {
+            $userLogin->login($mockClient, 'mock_username', 'mock_password');
+        } catch (InvalidArgumentException $e) {
+            $this->fail($e->getMessage());
+        }
+    }
+
+    public function testLoginSuccessReturnJsonException(): void
+    {
+        $mockHandler = new MockHandler([
+            new Response(
+                200,
+                [],
+                'mock_string_json_failed'
+            ),
+        ]);
+
+        $mockClient = new Client([
+            'handler' => HandlerStack::create($mockHandler)
+        ]);
+
+        $this->expectException(WriteForMeException::class);
+        $this->expectExceptionMessage('Syntax error');
         $userLogin = new UserLogin();
         try {
             $userLogin->login($mockClient, 'mock_username', 'mock_password');
