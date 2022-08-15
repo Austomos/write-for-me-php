@@ -23,7 +23,7 @@ class UserLogin implements UserLoginInterface
             throw new InvalidArgumentException('Username and password are required');
         }
         try {
-            $response = $client->post('/login', [
+            $response = $client->post('login', [
                 'json' => [
                     'username' => $username,
                     'password' => $password,

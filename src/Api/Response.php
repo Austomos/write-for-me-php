@@ -36,8 +36,17 @@ class Response extends GuzzleResponse implements ResponseInterface
         }
     }
 
-    public function getResponseBody(): array
+    public function getResponseBody(): array|object
     {
         return $this->json;
+    }
+
+    public function getResponseBodyObject(): object
+    {
+        return (object) $this->json;
+    }
+    public function getResponseBodyArray(): array
+    {
+        return (array) $this->json;
     }
 }

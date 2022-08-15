@@ -10,7 +10,7 @@ use GuzzleHttp\Client;
 
 class WriteForMe implements WriteForMeInterface
 {
-    public const BASE_URI = 'https://api.writeforme.org/api/v1';
+    public const BASE_URI = 'https://api.writeforme.org/api/v1/';
     protected static UserLoginInterface $login;
 
     /**
