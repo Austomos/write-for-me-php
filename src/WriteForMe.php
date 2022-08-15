@@ -13,12 +13,16 @@ class WriteForMe implements WriteForMeInterface
     public const BASE_URI = 'https://api.writeforme.org/api/v1/';
     protected static UserLoginInterface $login;
 
+    public function __construct()
+    {
+        self::$login = new UserLogin();
+    }
+
     /**
      * @throws \Austomos\WriteForMePhp\Exceptions\WriteForMeException
      */
     public static function create(string $username, string $password): WriteForMeInterface
     {
-        self::$login = new UserLogin();
         $client = new Client([
             'base_uri' => self::BASE_URI,
         ]);
@@ -28,7 +32,7 @@ class WriteForMe implements WriteForMeInterface
 
     public static function login(): UserLoginInterface
     {
-        if (!isset(self::$login) || !self::$login instanceof UserLoginInterface) {
+        if (!isset(self::$login) || !self::$login->isConnected()) {
             throw new \RuntimeException(
                 'You must login first, by calling WriteForMe::create() before calling WriteForMe::login()',
                 400

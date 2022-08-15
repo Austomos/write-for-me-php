@@ -72,7 +72,7 @@ class UserLogin implements UserLoginInterface
 
     public function isConnected(): bool
     {
-        return $this->login['success'] && !empty($this->login['token']);
+        return isset($this->login['success']) && $this->login['success'] === true && !empty($this->login['token']);
     }
 
     public function getLogin(): array
