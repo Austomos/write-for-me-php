@@ -14,21 +14,9 @@ class WriteForMe implements WriteForMeInterface
     public const BASE_URI = 'https://api.writeforme.org/api/v1/';
     protected static UserLoginInterface $login;
 
-    public function __construct()
+    public static function create(UserLoginInterface $userLogin): void
     {
-        self::$login = new UserLogin();
-    }
-
-    /**
-     * @throws \Austomos\WriteForMePhp\Exceptions\WriteForMeException
-     */
-    public static function create(string $username, string $password): WriteForMeInterface
-    {
-        $client = new Client([
-            'base_uri' => self::BASE_URI,
-        ]);
-        self::$login->login($client, $username, $password);
-        return new static();
+        self::$login = $userLogin;
     }
 
     public static function login(): UserLoginInterface
