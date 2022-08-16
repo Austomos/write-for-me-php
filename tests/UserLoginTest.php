@@ -56,7 +56,6 @@ class UserLoginTest extends TestCase
 
         $reflection = new ReflectionClass(UserLogin::class);
         $clientProperty = $reflection->getProperty('client');
-
         $clientProperty->setValue(
             $userLogin,
             $mockClient
@@ -90,7 +89,6 @@ class UserLoginTest extends TestCase
 
         $reflection = new ReflectionClass(UserLogin::class);
         $clientProperty = $reflection->getProperty('client');
-
         $clientProperty->setValue(
             $userLogin,
             $mockClient
@@ -156,7 +154,6 @@ class UserLoginTest extends TestCase
 
         $reflection = new ReflectionClass(UserLogin::class);
         $clientProperty = $reflection->getProperty('client');
-
         $clientProperty->setValue(
             $userLogin,
             $mockClient

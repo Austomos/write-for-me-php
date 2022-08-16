@@ -18,9 +18,8 @@ class WriteForMeTest extends TestCase
         \Mockery::close();
         parent::tearDown();
     }
-    public function testLoginCreateNotCalledRuntimeException(): void
+    public function testLoginCreateNotSetRuntimeException(): void
     {
-        new WriteForMe();
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage(
             'You must login first, by calling WriteForMe::create() before calling WriteForMe::login()'
@@ -28,28 +27,30 @@ class WriteForMeTest extends TestCase
         WriteForMe::login();
     }
 
-    public function testTaskReturned(): void
+    public function testCreateSuccess(): void
     {
-        $wfm = new WriteForMe();
-        $this->assertInstanceOf(Task::class, $wfm->task());
-    }
+        $mockUserLogin = new UserLogin('mock_username', 'mock_password');
+        $reflection = new ReflectionClass(UserLogin::class);
+        $clientProperty = $reflection->getProperty('login');
+        $clientProperty->setValue(
+            $mockUserLogin,
+            ['success' => true, 'token' => 'mock_token']
+        );
 
-    public function testCreatSuccess(): void
-    {
         $wfm = new WriteForMe();
-
-        $mockUserLogin = Mockery::mock(UserLogin::class)->makePartial();
-        $mockUserLogin->expects('login');
         $reflection = new ReflectionClass(WriteForMe::class);
         $clientProperty = $reflection->getProperty('login');
         $clientProperty->setValue(
             $wfm,
             $mockUserLogin
         );
-        try {
-            $this->assertInstanceOf(WriteForMe::class, $wfm::create('mock_username', 'mock_password'));
-        } catch (WriteForMeException $e) {
-            $this->fail($e->getMessage());
-        }
+
+        $this->assertInstanceOf(UserLogin::class, WriteForMe::login());
+    }
+
+    public function testTask(): void
+    {
+        $wfm = new WriteForMe();
+        $this->assertInstanceOf(Task::class, $wfm->task());
     }
 }
