@@ -12,21 +12,34 @@ use Psr\Http\Message\ResponseInterface;
 
 class UserLogin implements UserLoginInterface
 {
+    private Client $client;
     private array $login;
+    private string $password;
+    private string $username;
+
+    public function __construct(string $username, string $password)
+    {
+        if (empty($this->username = $username)) {
+            throw new InvalidArgumentException('Username cannot be empty', 400);
+        }
+        if (empty($this->password = $password)) {
+            throw new InvalidArgumentException('Password cannot be empty', 400);
+        }
+        $this->client = new Client([
+            'base_uri' => WriteForMe::BASE_URI,
+        ]);
+    }
 
     /**
      * @throws \Austomos\WriteForMePhp\Exceptions\WriteForMeException
      */
-    public function login(Client $client, string $username, string $password): void
+    public function login(): void
     {
-        if (empty($username) || empty($password)) {
-            throw new InvalidArgumentException('Username and password are required');
-        }
         try {
-            $response = $client->post('login', [
+            $response = $this->client->post('login', [
                 'json' => [
-                    'username' => $username,
-                    'password' => $password,
+                    'username' => $this->username,
+                    'password' => $this->password,
                 ],
             ]);
         } catch (GuzzleException $e) {

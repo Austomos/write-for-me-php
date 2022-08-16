@@ -4,6 +4,7 @@ namespace Austomos\WriteForMePhp\Tests;
 
 use Austomos\WriteForMePhp\Exceptions\WriteForMeException;
 use Austomos\WriteForMePhp\UserLogin;
+use Austomos\WriteForMePhp\WriteForMe;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Handler\MockHandler;
@@ -11,9 +12,9 @@ use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
 use InvalidArgumentException;
-use JsonException;
 use Mockery;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
 
 class UserLoginTest extends TestCase
 {
@@ -23,44 +24,18 @@ class UserLoginTest extends TestCase
         parent::tearDown();
     }
 
-    public function testLoginInvalidArgumentExceptionNoUserNoPassword(): void
-    {
-        $userLogin = new UserLogin();
-        $stub = Mockery::mock(Client::class)->makePartial();
-
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Username and password are required');
-        try {
-            $userLogin->login($stub, '', '');
-        } catch (WriteForMeException $e) {
-            $this->fail($e->getMessage());
-        }
-    }
-
     public function testLoginInvalidArgumentExceptionNoUser(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Username and password are required');
-        $userLogin = new UserLogin();
-        $stub = Mockery::mock(Client::class);
-        try {
-            $userLogin->login($stub, '', 'mock_password');
-        } catch (WriteForMeException $e) {
-            $this->fail($e->getMessage());
-        }
+        $this->expectExceptionMessage('Username cannot be empty');
+        new UserLogin('', 'mock_password');
     }
 
     public function testLoginInvalidArgumentExceptionNoPassword(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Username and password are required');
-        $userLogin = new UserLogin();
-        $stub = Mockery::mock(Client::class);
-        try {
-            $userLogin->login($stub, 'mock_user', '');
-        } catch (WriteForMeException $e) {
-            $this->fail($e->getMessage());
-        }
+        $this->expectExceptionMessage('Password cannot be empty');
+        new UserLogin('mock_username', '');
     }
 
     public function testLoginHttpResultException(): void
@@ -77,11 +52,21 @@ class UserLoginTest extends TestCase
             'handler' => HandlerStack::create($mockHandler)
         ]);
 
+        $userLogin = new UserLogin('mock_username', 'mock_password');
+
+        $reflection = new ReflectionClass(UserLogin::class);
+        $clientProperty = $reflection->getProperty('client');
+
+        $clientProperty->setValue(
+            $userLogin,
+            $mockClient
+        );
+
         $this->expectException(WriteForMeException::class);
         $this->expectExceptionMessage('Unauthorized mock');
-        $userLogin = new UserLogin();
+        $this->expectExceptionCode(401);
         try {
-            $userLogin->login($mockClient, 'mock_username', 'mock_password');
+            $userLogin->login();
         } catch (InvalidArgumentException $e) {
             $this->fail($e->getMessage());
         }
@@ -101,11 +86,20 @@ class UserLoginTest extends TestCase
             'handler' => HandlerStack::create($mockHandler)
         ]);
 
+        $userLogin = new UserLogin('mock_username', 'mock_password');
+
+        $reflection = new ReflectionClass(UserLogin::class);
+        $clientProperty = $reflection->getProperty('client');
+
+        $clientProperty->setValue(
+            $userLogin,
+            $mockClient
+        );
+
         $this->expectException(WriteForMeException::class);
         $this->expectExceptionMessage('Login failed: failed');
-        $userLogin = new UserLogin();
         try {
-            $userLogin->login($mockClient, 'mock_username', 'mock_password');
+            $userLogin->login();
         } catch (InvalidArgumentException $e) {
             $this->fail($e->getMessage());
         }
@@ -125,11 +119,20 @@ class UserLoginTest extends TestCase
             'handler' => HandlerStack::create($mockHandler)
         ]);
 
+        $userLogin = new UserLogin('mock_username', 'mock_password');
+
+        $reflection = new ReflectionClass(UserLogin::class);
+        $clientProperty = $reflection->getProperty('client');
+
+        $clientProperty->setValue(
+            $userLogin,
+            $mockClient
+        );
+
         $this->expectException(WriteForMeException::class);
         $this->expectExceptionMessage('Syntax error');
-        $userLogin = new UserLogin();
         try {
-            $userLogin->login($mockClient, 'mock_username', 'mock_password');
+            $userLogin->login();
         } catch (InvalidArgumentException $e) {
             $this->fail($e->getMessage());
         }
@@ -149,9 +152,18 @@ class UserLoginTest extends TestCase
             'handler' => HandlerStack::create($mockHandler)
         ]);
 
-        $userLogin = new UserLogin();
+        $userLogin = new UserLogin('mock_username', 'mock_password');
+
+        $reflection = new ReflectionClass(UserLogin::class);
+        $clientProperty = $reflection->getProperty('client');
+
+        $clientProperty->setValue(
+            $userLogin,
+            $mockClient
+        );
+
         try {
-            $userLogin->login($mockClient, 'mock_username', 'mock_password');
+            $userLogin->login();
         } catch (WriteForMeException $e) {
             $this->fail($e->getMessage());
         }
