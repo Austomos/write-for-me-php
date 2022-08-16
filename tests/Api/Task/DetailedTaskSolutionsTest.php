@@ -4,12 +4,18 @@ namespace Austomos\WriteForMePhp\Tests\Api\Task;
 
 use Austomos\WriteForMePhp\Api\Task\DetailedTaskSolutions;
 use Austomos\WriteForMePhp\Exceptions\WriteForMeException;
+use Austomos\WriteForMePhp\Interfaces\ResponseInterface;
 use Austomos\WriteForMePhp\UserLogin;
 use Austomos\WriteForMePhp\WriteForMe;
+use GuzzleHttp\Client;
+use GuzzleHttp\Handler\MockHandler;
+use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Psr7\Response;
 use InvalidArgumentException;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
+use ReflectionException;
 
 class DetailedTaskSolutionsTest extends TestCase
 {
@@ -37,10 +43,33 @@ class DetailedTaskSolutionsTest extends TestCase
             $mockUserLogin
         );
 
+        $mockHandler = new MockHandler([
+            new Response(200, ['Content-Type' => 'application/json'], '{"body": "mock_value"}'),
+        ]);
+
         $detailedTaskSolutions = new DetailedTaskSolutions();
+        $reflection = new ReflectionClass(DetailedTaskSolutions::class);
+        $reflectionParent = $reflection->getParentClass();
+        try {
+            $clientProperty = $reflectionParent->getProperty('guzzleClient');
+        } catch (ReflectionException $e) {
+            $this->fail($e->getMessage());
+        }
+        $clientProperty->setValue(
+            $detailedTaskSolutions,
+            new Client([
+                'handler' => HandlerStack::create($mockHandler)
+            ])
+        );
+
         $detailedTaskSolutions->setTask('mock_task');
-
-
+        try {
+            $response = $detailedTaskSolutions->request();
+        } catch (WriteForMeException $e) {
+            $this->fail($e->getMessage());
+        }
+        $this->assertSame(['body' => 'mock_value'], $response->getResponseBodyArray());
+        $this->assertEquals(200, $response->getStatusCode());
     }
 
     public function testDetailedTaskSolutionsLoginException(): void
