@@ -19,6 +19,30 @@ class DetailedTaskSolutionsTest extends TestCase
         parent::tearDown();
     }
 
+    public function testDetailedTaskSolutionsSuccess(): void
+    {
+        $mockUserLogin = new UserLogin();
+        $reflection = new ReflectionClass(UserLogin::class);
+        $clientProperty = $reflection->getProperty('login');
+        $clientProperty->setValue(
+            $mockUserLogin,
+            ['token' => 'mock_token', 'success' => true]
+        );
+
+        $mockWriteForMe = new WriteForMe();
+        $reflection = new ReflectionClass(WriteForMe::class);
+        $clientProperty = $reflection->getProperty('login');
+        $clientProperty->setValue(
+            $mockWriteForMe,
+            $mockUserLogin
+        );
+
+        $detailedTaskSolutions = new DetailedTaskSolutions();
+        $detailedTaskSolutions->setTask('mock_task');
+
+
+    }
+
     public function testDetailedTaskSolutionsLoginException(): void
     {
         $this->expectException(WriteForMeException::class);
@@ -55,7 +79,7 @@ class DetailedTaskSolutionsTest extends TestCase
         $this->expectExceptionMessage('Invalid arguments provided');
         $detailedTaskSolutions = new DetailedTaskSolutions();
         try {
-            $detailedTaskSolutions->requestResponse();
+            $detailedTaskSolutions->request();
         } catch (WriteForMeException $e) {
             $this->fail($e->getMessage());
         }
