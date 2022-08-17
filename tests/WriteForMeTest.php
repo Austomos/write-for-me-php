@@ -20,6 +20,11 @@ class WriteForMeTest extends TestCase
     }
     public function testLoginCreateNotSetRuntimeException(): void
     {
+        $wfm = new WriteForMe();
+        $reflection = new ReflectionClass(WriteForMe::class);
+        $loginProperty = $reflection->getProperty('login');
+        $loginProperty->setValue($wfm, new UserLogin('mock_username', 'mock_password'));
+
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage(
             'You must login first, by calling WriteForMe::create() before calling WriteForMe::login()'
@@ -37,15 +42,9 @@ class WriteForMeTest extends TestCase
             ['success' => true, 'token' => 'mock_token']
         );
 
-        $wfm = new WriteForMe();
-        $reflection = new ReflectionClass(WriteForMe::class);
-        $clientProperty = $reflection->getProperty('login');
-        $clientProperty->setValue(
-            $wfm,
-            $mockUserLogin
-        );
-
-        $this->assertInstanceOf(UserLogin::class, WriteForMe::login());
+        WriteForMe::create($mockUserLogin);
+        $this->assertInstanceOf(UserLogin::class, $login = WriteForMe::login());
+        $this->assertEquals('mock_token', $login->getToken());
     }
 
     public function testTask(): void

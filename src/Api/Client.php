@@ -22,24 +22,16 @@ abstract class Client implements ClientInterface
     abstract public function getUri(): string|UriInterface;
 
     /**
-     * @throws \Austomos\WriteForMePhp\Exceptions\WriteForMeException
+     * @throws RuntimeException
      */
     public function __construct()
     {
-        try {
-            $this->guzzleClient = new GuzzleClient([
-                'base_uri' => WriteForMe::BASE_URI,
-                'headers' => [
-                    'Authorization' => 'Bearer ' . WriteForMe::login()->getToken(),
-                ]
-            ]);
-        } catch (RuntimeException $e) {
-            throw new WriteForMeException(
-                'You must login first, by calling WriteForMe::create() before calling WriteForMe::login()',
-                400,
-                $e
-            );
-        }
+        $this->guzzleClient = new GuzzleClient([
+            'base_uri' => WriteForMe::BASE_URI,
+            'headers' => [
+                'Authorization' => 'Bearer ' . WriteForMe::login()->getToken(),
+            ]
+        ]);
     }
 
     /**
