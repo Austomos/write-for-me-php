@@ -6,7 +6,6 @@ use Austomos\WriteForMePhp\Api\Task;
 use Austomos\WriteForMePhp\Interfaces\Api\TaskInterface;
 use Austomos\WriteForMePhp\Interfaces\UserLoginInterface;
 use Austomos\WriteForMePhp\Interfaces\WriteForMeInterface;
-use GuzzleHttp\Client;
 use RuntimeException;
 
 class WriteForMe implements WriteForMeInterface
