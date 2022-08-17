@@ -4,6 +4,7 @@ namespace Austomos\WriteForMePhp\Tests\Api;
 
 use Austomos\WriteForMePhp\Api\Client;
 use Austomos\WriteForMePhp\Exceptions\WriteForMeException;
+use Austomos\WriteForMePhp\Interfaces\ResponseInterface;
 use Austomos\WriteForMePhp\UserLogin;
 use Austomos\WriteForMePhp\WriteForMe;
 use GuzzleHttp\Exception\RequestException;
@@ -18,7 +19,6 @@ use GuzzleHttp\Handler\MockHandler;
 
 class ClientTest extends TestCase
 {
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -48,9 +48,11 @@ class ClientTest extends TestCase
     public function testRequestGuzzleExceptionThrew(): void
     {
         $client = $this->getMockForAbstractClass(Client::class);
-        $client->expects($this->once())
-            ->method('isValidOptions')
-            ->willReturn(true);
+
+        $client->expects($this->once())->method('isValidOptions')->willReturn(true);
+        $client->expects($this->once())->method('getMethod')->willReturn('GET');
+        $client->expects($this->once())->method('getUri')->willReturn('/getSolutions');
+        $client->expects($this->once())->method('getOptions')->willReturn(['json' => ['mock_key' => 'mock_value']]);
 
         $mockHandler = new MockHandler([
             new RequestException(
@@ -69,11 +71,9 @@ class ClientTest extends TestCase
             ])
         );
 
-        try {
-            $client->request();
-        } catch (WriteForMeException $e) {
-            $this->fail($e->getMessage());
-        }
+        $this->expectException(WriteForMeException::class);
+        $this->expectExceptionMessage('Unauthorized mock');
+        $this->expectExceptionCode(401);
+        $client->request();
     }
-
 }
