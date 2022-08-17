@@ -4,29 +4,23 @@ namespace Austomos\WriteForMePhp\Api;
 
 use Austomos\WriteForMePhp\Exceptions\WriteForMeException;
 use Austomos\WriteForMePhp\Interfaces\ResponseInterface;
-use GuzzleHttp\Psr7\Response as GuzzleResponse;
 use JsonException;
 use Psr\Http\Message\ResponseInterface as GuzzleResponseInterface;
 
-class Response extends GuzzleResponse implements ResponseInterface
+class Response implements ResponseInterface
 {
-    private array $json;
+    private array|object $json;
+    private GuzzleResponseInterface $response;
 
     /**
      * @throws \Austomos\WriteForMePhp\Exceptions\WriteForMeException
      */
     public function __construct(GuzzleResponseInterface $response)
     {
-        parent::__construct(
-            $response->getStatusCode(),
-            $response->getHeaders(),
-            $response->getBody(),
-            $response->getProtocolVersion(),
-            $response->getReasonPhrase()
-        );
+        $this->response = $response;
         try {
             $this->json = json_decode(
-                $this->getBody()->getContents(),
+                $this->response->getBody()->getContents(),
                 false,
                 512,
                 JSON_THROW_ON_ERROR | JSON_OBJECT_AS_ARRAY
@@ -36,8 +30,22 @@ class Response extends GuzzleResponse implements ResponseInterface
         }
     }
 
-    public function getResponseBody(): array
+    public function response(): GuzzleResponseInterface
+    {
+        return $this->response;
+    }
+
+    public function getResponseBody(): array|object
     {
         return $this->json;
+    }
+
+    public function getResponseBodyObject(): object
+    {
+        return (object) $this->getResponseBody();
+    }
+    public function getResponseBodyArray(): array
+    {
+        return (array) $this->getResponseBody();
     }
 }

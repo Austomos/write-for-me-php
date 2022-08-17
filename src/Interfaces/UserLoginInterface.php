@@ -6,7 +6,8 @@ use GuzzleHttp\Client;
 
 interface UserLoginInterface
 {
-    public function login(Client $client, string $username, string $password): void;
+    public function __construct(string $username, string $password);
+    public function login(): void;
 
     public function getToken(): string;
     public function getUsername(): string;

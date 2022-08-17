@@ -8,42 +8,42 @@ use Austomos\WriteForMePhp\Interfaces\ResponseInterface;
 use Austomos\WriteForMePhp\WriteForMe;
 use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\Exception\GuzzleException;
+use InvalidArgumentException;
 use Psr\Http\Message\UriInterface;
+use RuntimeException;
 
-abstract class Client extends GuzzleClient implements ClientInterface
+abstract class Client implements ClientInterface
 {
-    abstract protected function getOptions(): array;
-    abstract protected function isValidOptions(): bool;
-    abstract protected function getMethod(): string;
-    abstract protected function getUri(): string|UriInterface;
+    private GuzzleClient $guzzleClient;
+
+    abstract public function getOptions(): array;
+    abstract public function isValidOptions(): bool;
+    abstract public function getMethod(): string;
+    abstract public function getUri(): string|UriInterface;
 
     /**
-     * @throws \Austomos\WriteForMePhp\Exceptions\WriteForMeException
+     * @throws RuntimeException
      */
     public function __construct()
     {
-        try {
-            parent::__construct([
-                'base_uri' => WriteForMe::BASE_URI,
-                'headers' => [
-                    'Authorization' => 'Bearer ' . WriteForMe::login()->getToken(),
-                ]
-            ]);
-        } catch (\RuntimeException $e) {
-            throw new WriteForMeException('You must login first', 400, $e);
-        }
+        $this->guzzleClient = new GuzzleClient([
+            'base_uri' => WriteForMe::BASE_URI,
+            'headers' => [
+                'Authorization' => 'Bearer ' . WriteForMe::login()->getToken(),
+            ]
+        ]);
     }
 
     /**
      * @throws WriteForMeException
      */
-    public function requestResponse(): ResponseInterface
+    public function request(): ResponseInterface
     {
         if (!$this->isValidOptions()) {
-            throw new WriteForMeException('Invalid arguments provided', 400);
+            throw new InvalidArgumentException('Invalid arguments provided', 400);
         }
         try {
-            return new Response($this->request($this->getMethod(), $this->getUri(), $this->getOptions()));
+            return new Response($this->guzzleClient->request($this->getMethod(), $this->getUri(), $this->getOptions()));
         } catch (GuzzleException $e) {
             throw new WriteForMeException($e->getMessage(), $e->getCode(), $e);
         }
