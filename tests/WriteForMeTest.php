@@ -33,6 +33,20 @@ class WriteForMeTest extends TestCase
         WriteForMe::login();
     }
 
+    public function testFactoryCreateNotSetRuntimeException(): void
+    {
+        $wfm = new WriteForMe();
+        $reflection = new ReflectionClass(WriteForMe::class);
+        $loginProperty = $reflection->getProperty('login');
+        $loginProperty->setValue($wfm, new UserLogin('mock_username', 'mock_password'));
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage(
+            'You must login first, by calling WriteForMe::create() before calling WriteForMe::login()'
+        );
+        WriteForMe::factory();
+    }
+
     public function testCreateAndFactorySuccess(): void
     {
         $mockUserLogin = new UserLogin('mock_username', 'mock_password');

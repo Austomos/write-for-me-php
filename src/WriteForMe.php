@@ -34,9 +34,9 @@ class WriteForMe implements WriteForMeInterface
 
     public static function factory(): WriteForMeInterface
     {
-        if (!isset(self::$factory)) {
+        if (!isset(self::$login) || !self::$login->isConnected()) {
             throw new RuntimeException(
-                'You must create factory first, by calling WriteForMe::create()',
+                'You must login first, by calling WriteForMe::create() before calling WriteForMe::login()',
                 400
             );
         }
