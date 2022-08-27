@@ -15,9 +15,10 @@ class WriteForMeTest extends TestCase
 {
     protected function tearDown(): void
     {
-        \Mockery::close();
+        Mockery::close();
         parent::tearDown();
     }
+
     public function testLoginCreateNotSetRuntimeException(): void
     {
         $wfm = new WriteForMe();
@@ -32,14 +33,13 @@ class WriteForMeTest extends TestCase
         WriteForMe::login();
     }
 
-    public function testCreateSuccess(): void
+    public function testCreateAndFactorySuccess(): void
     {
         $mockUserLogin = new UserLogin('mock_username', 'mock_password');
         $reflection = new ReflectionClass(UserLogin::class);
         $clientProperty = $reflection->getProperty('login');
         $clientProperty->setValue(
-            $mockUserLogin,
-            ['success' => true, 'token' => 'mock_token']
+            $mockUserLogin, ['success' => true, 'token' => 'mock_token']
         );
 
         WriteForMe::create($mockUserLogin);
@@ -49,7 +49,6 @@ class WriteForMeTest extends TestCase
 
     public function testTask(): void
     {
-        $wfm = new WriteForMe();
-        $this->assertInstanceOf(Task::class, $wfm->task());
+        $this->assertInstanceOf(Task::class, WriteForMe::factory()->task());
     }
 }
